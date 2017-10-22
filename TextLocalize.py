@@ -65,13 +65,6 @@ def extractBackgnd(_regionsList, _img):
     #ret, thres = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     #ret, contours, hier = cv2.findContours(thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-    #textregions = []
-    #for c in contours:
-    #    peri = cv2.arcLength(c, True)
-    #    approx = cv2.approxPolyDP(c, 0.02*peri, True)
-    #    if len(approx) == 4:
-    #        textregions.append(c)
-
     for reg in regions:
         x = reg[0]
         y = reg[1]
