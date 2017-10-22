@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
 
-
+# outputs list textreg_list (a list of text regions)
+# each item has format (x,y,w,h) which represent column, row, width, height
 def localizeText(_base_img):
     bgr_img = _base_img.copy()
     base_img = cv2.cvtColor(_base_img, cv2.COLOR_BGR2GRAY)
