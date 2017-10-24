@@ -40,7 +40,7 @@ def localizeText(_base_img):
 
         if r > 0.45 and w > 8 and h > 8:
             cv2.rectangle(bgr_img, (x,y),(x+w-1,y+h-1), (0,125,0), 2)
-            textreg_list.append((x,y,w,h))
+            textreg_list.append([x,y,w,h])
 
         #if x == 0 & y == 0:
         #    continue
@@ -51,12 +51,12 @@ def localizeText(_base_img):
     #base_img = cv2.GaussianBlur(base_img, (5,5), 0)
     #edges = cv2.Canny(base_img, 100, 200)
 
-    cv2.imshow('clr', bgr_img)
+    #cv2.imshow('clr', bgr_img)
     #cv2.imshow('base', connect)
     #cv2.imshow('img', thres)
     #cv2.imshow('dil', dilate)
 
-    return textreg_list
+    return textreg_list, bgr_img
 
 def extractBackgnd(_regionsList, _img):
     regions = _regionsList
@@ -90,11 +90,12 @@ def extractBackgnd(_regionsList, _img):
 
     return img
 
-#testimg = cv2.imread('testfiles/menu5.jpg')
-testimg = cv2.imread('testfiles/menu4.png')
+if __name__ == '__main__':
+    #testimg = cv2.imread('testfiles/menu5.jpg')
+    testimg = cv2.imread('test.png')
 
-rect = localizeText(testimg)
-print(*rect, sep='\n')
+    rects, img = localizeText(testimg)
+    print(*rects, sep='\n')
 
-cv2.imshow('bkgd', extractBackgnd(rect, testimg))
-cv2.waitKey()
+    cv2.imshow('bkgd', extractBackgnd(rects, testimg))
+    cv2.waitKey()
