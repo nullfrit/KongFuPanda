@@ -7,6 +7,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import TextLocalize as tl
 import ocr_trans as ot
+from PIL import Image,ImageFont,ImageDraw
 #
 
 import sys
@@ -82,13 +83,23 @@ class MyDialog(QDialog):
         self.ui.updateImage(cv2QImage(self.cvImage))
 
     def autoDetect(self):
-        margin = 2
+        margin = 3
         self.coord_list, autodetect_image = tl.localizeText(self.cvImage)
         for item in self.coord_list:
             roi = self.cvImage[item[1] - margin:item[1]+item[3] + margin, item[0]- margin:item[0]+item[2] + margin].copy()
-            text = ot.ocr(roi)
-            print('OCR text:\n--{}--'.format(text))
-            # item[4] = text
+            text = ''
+            try:
+                text = ot.ocr(roi)
+                # words = text.split(' ')
+                # words = text.replace(' ', ';')
+                # corrected = ot.text_correction(words)
+                # corrected =  ' '.join(corrected)
+
+                # corrected = ' '.join([ot.local_correction(word) for word in words])
+                print('OCR text:\n--{}--'.format(text))
+            except:
+                print("Unexpected error:", sys.exc_info()[0], sys.exc_info()[1])
+            # item[4] = textX
             item.append(text)
             item.append('')
 
@@ -129,10 +140,21 @@ class MyDialog(QDialog):
             translated_text.append(item[5])
 
         background = tl.extractBackgnd(boxes, self.cvImage)
-        font = cv2.FONT_HERSHEY_SIMPLEX
+        # font = cv2.FONT_HERSHEY_SIMPLEX
+
+        cv2.cvtColor(background, cv2.COLOR_BGR2RGB, background)
+        img = Image.fromarray(background)
+        draw = ImageDraw.Draw(img)
         for box, text in zip(boxes, translated_text):
-            cv2.putText(background, text, (box[0], box[1]), font, 1, (200, 255, 155), 2, cv2.LINE_AA)
-        cv2.imwrite('translated.jpg', background)
+            try:
+                fontim = ImageFont.truetype('simhei.ttf', box[3])
+                draw.text((box[0], box[1]), text, font=fontim, fill=(0,0,0,255))
+            except:
+                print("Unexpected error:", sys.exc_info()[0], sys.exc_info()[1])
+            # cv2.putText(background, text, (box[0], box[1] + box[3]), font, 0.5, (200, 255, 155), 1, cv2.LINE_AA)
+        cv2.imwrite('background.jpg', background)
+        img.save('translated.jpg', "JPEG")
+        # img.show()
 
 
 
